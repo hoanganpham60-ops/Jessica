@@ -28,20 +28,19 @@ fi
 if [ ! -f .env ]; then
   log "Tạo .env từ .env.example ..."
   cp .env.example .env
-  # Tự sinh OPENCLAW_TOKEN
+  # sed portable Linux/macOS
+  sed_inplace() {
+    if sed --version >/dev/null 2>&1; then sed -i "$@"; else sed -i '' "$@"; fi
+  }
   if command -v openssl >/dev/null 2>&1; then
     TOKEN="$(openssl rand -hex 24)"
-    # sed portable Linux/macOS
-    if sed --version >/dev/null 2>&1; then
-      sed -i "s|^OPENCLAW_TOKEN=.*|OPENCLAW_TOKEN=${TOKEN}|" .env
-    else
-      sed -i '' "s|^OPENCLAW_TOKEN=.*|OPENCLAW_TOKEN=${TOKEN}|" .env
-    fi
-    log "Đã random OPENCLAW_TOKEN."
+    SECRET="$(openssl rand -hex 32)"
+    sed_inplace "s|^OPENCLAW_TOKEN=.*|OPENCLAW_TOKEN=${TOKEN}|" .env
+    sed_inplace "s|^SETUP_SESSION_SECRET=.*|SETUP_SESSION_SECRET=${SECRET}|" .env
+    log "Đã random OPENCLAW_TOKEN + SETUP_SESSION_SECRET."
   else
-    log "openssl không có — nhớ vào .env điền OPENCLAW_TOKEN thủ công."
+    log "openssl không có — nhớ điền OPENCLAW_TOKEN và SETUP_SESSION_SECRET thủ công."
   fi
-  log "==> Mở .env để điền GOOGLE_API_KEY / TELEGRAM_BOT_TOKEN (tuỳ chọn)."
 fi
 
 # 3. Build & up
@@ -60,15 +59,18 @@ cat <<EOF
 ================================================================
  Openclaw đã chạy. Các điểm truy cập:
 
-   Dashboard 9router: http://<host>:$(grep -E '^NINEROUTER_PORT' .env | cut -d= -f2)
-   Gateway (HTTPS):   https://<host>:$(grep -E '^NGINX_PORT' .env | cut -d= -f2)
+   Setup UI:          https://<host>:$(grep -E '^NGINX_PORT' .env | cut -d= -f2)/setup
    Zalo QR:           https://<host>:$(grep -E '^NGINX_PORT' .env | cut -d= -f2)/zalo
+   9router dashboard: http://<host>:$(grep -E '^NINEROUTER_PORT' .env | cut -d= -f2)
+   Gateway (HTTPS):   https://<host>:$(grep -E '^NGINX_PORT' .env | cut -d= -f2)
 
- Việc cần làm ngay:
-   1. Mở dashboard 9router → thêm API keys provider (Gemini/OpenRouter/…)
-   2. Sửa /root/.openclaw/openclaw.json trong volume bot nếu cần:
-        docker exec -it openclaw-bot sh
-   3. Scan QR Zalo: mở /zalo trên nginx
+ Các bước tiếp theo:
+   1. Mở Setup UI → tạo mật khẩu admin (lần đầu).
+   2. Tab "Providers" → thêm API keys (Gemini / OpenRouter / …).
+   3. Tab "General" → đặt tên bot, system prompt.
+   4. Tab "Channels" → bật Zalo/Telegram.
+   5. Nhấn "Restart bot" trên Dashboard.
+   6. Vào /zalo để scan QR (nếu đã bật Zalo).
 
  Logs:    ./scripts/logs.sh
  Dừng:    docker compose down

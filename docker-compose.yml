@@ -53,6 +53,27 @@ services:
     depends_on:
       - ai-bot
 
+  setup:
+    build:
+      context: ./docker/setup
+    image: openclaw/setup:local
+    container_name: openclaw-setup
+    restart: always
+    environment:
+      PORT: "3000"
+      SESSION_SECRET: ${SETUP_SESSION_SECRET}
+    volumes:
+      # Edit openclaw.json (bot-home) và db.json (router-data) + lưu auth.json riêng
+      - bot-home:/data/openclaw
+      - router-data:/data/9router
+      - setup-data:/data/setup
+      # Để gọi docker restart từ UI
+      - /var/run/docker.sock:/var/run/docker.sock
+    # KHÔNG expose port — chỉ truy cập qua nginx /setup
+    depends_on:
+      - ai-bot
+      - 9router
+
   nginx:
     image: nginx:alpine
     container_name: openclaw-nginx
@@ -60,6 +81,7 @@ services:
     depends_on:
       - ai-bot
       - zalo
+      - setup
     ports:
       - "${NGINX_PORT:-9504}:443"
     volumes:
@@ -82,3 +104,4 @@ volumes:
   zalo-data:
   openclaw-tmp:
   nginx-ssl:
+  setup-data:

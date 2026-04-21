@@ -31,61 +31,63 @@ cd openclaw
 ./install.sh
 ```
 
-Installer sẽ tạo `.env` tự động. Sau đó mở `.env` để xem/sửa:
+Installer sẽ tạo `.env` tự động (`OPENCLAW_TOKEN` + `SETUP_SESSION_SECRET` random), build 5 image (bot, 9router, zalo, setup, nginx), kéo `nginx:alpine`, rồi `docker compose up -d`.
 
-```bash
-# Ports
-NGINX_PORT=9504           # HTTPS gateway
-NINEROUTER_PORT=20128     # 9router dashboard
+## 4. Cấu hình qua Setup UI
 
-# Token auth giữa zalo connector <-> bot gateway
-OPENCLAW_TOKEN=<đã random tự động>
+Mở browser → `https://<host>:9504/setup` → chấp nhận cert self-signed.
 
-# API keys tuỳ chọn
-GOOGLE_API_KEY=
-TELEGRAM_BOT_TOKEN=
-```
+### Lần đầu: tạo mật khẩu admin
+Form "Thiết lập mật khẩu admin" hiện ra. Nhập mật khẩu (≥ 6 ký tự) → **Tạo & đăng nhập**.
 
-## 4. Cấu hình 9router
+Lưu vào volume `setup-data/auth.json` (bcrypt). Không bao giờ plaintext.
 
-Mở `http://<host>:20128`:
+### Tab **General**
+- **Tên bot** — ví dụ `Jessica`
+- **Model mặc định** — ví dụ `9router/gemini/gemini-2.5-flash`
+- **System prompt** — persona + hướng dẫn trả lời
 
-1. **Providers** → Add connection → chọn Gemini/OpenRouter/NVIDIA/… → paste API key.
-2. **Combos** → tạo combo (hoặc dùng `combo1` có sẵn) → gán các provider vào theo priority.
-3. **API Keys** → copy key `local-default` (hoặc tạo key mới) để dán vào `openclaw.json` của bot.
+Bấm **Lưu** → về Dashboard bấm **Restart bot**.
 
-## 5. Cấu hình bot Openclaw
+### Tab **Providers** (LLM)
+Thêm lần lượt các nhà cung cấp:
 
-Mặc định lần đầu boot, container sẽ seed `config/openclaw/openclaw.json.example` thành `/root/.openclaw/openclaw.json` trong volume `bot-home`.
+| Provider    | Key format              | Lấy ở đâu                                   |
+|-------------|-------------------------|---------------------------------------------|
+| gemini      | `AIzaSy...`             | https://aistudio.google.com                 |
+| openrouter  | `sk-or-v1-...`          | https://openrouter.ai/keys                  |
+| nvidia      | `nvapi-...`             | https://build.nvidia.com                    |
+| openai      | `sk-...`                | https://platform.openai.com/api-keys        |
+| anthropic   | `sk-ant-...`            | https://console.anthropic.com               |
 
-Sửa trong container:
+Sau khi thêm → Dashboard → **Restart 9router**.
 
-```bash
-docker exec -it openclaw-bot sh
-cd /root/.openclaw
-vi openclaw.json
-```
+### Tab **Channels**
+- **Zalo Personal** — bật checkbox. Không cần token.
+- **Telegram** — bật checkbox + paste bot token (`123456:ABC...` lấy từ `@BotFather`).
 
-Các field quan trọng:
+Bấm **Lưu** → **Restart bot**.
 
-| Field | Ý nghĩa |
-|---|---|
-| `models.providers.9router.baseUrl` | Phải là `http://9router:20128/v1` (tên service trong docker network) |
-| `models.providers.9router.apiKey` | Paste key lấy từ 9router ở bước 4 |
-| `agents.defaults.memorySearch.remote.apiKey` | Cũng paste key 9router vào đây |
-| `gateway.token` | Phải trùng `OPENCLAW_TOKEN` trong `.env` |
+### Tab **Memory**
+- `memory-core` (slot owner + dreaming): **bật** nếu muốn bot nhớ lâu.
+- `active-memory` (inject context trước DM): **bật** kèm theo.
+- **Dreaming cron**: mặc định `0 3 * * *` (3AM VN). Cron expression 5 trường chuẩn.
 
-Sau khi sửa:
-```bash
-docker compose restart ai-bot
-```
+## 5. Đăng nhập Zalo Personal
 
-## 6. Đăng nhập Zalo Personal
-
-1. Mở `https://<host>:9504/zalo` (accept cert self-signed).
+1. Mở `https://<host>:9504/zalo`.
 2. Scan QR bằng app Zalo Personal trên điện thoại.
-3. Session sẽ được lưu trong volume `zalo-data`. Không cần scan lại nếu không logout.
+3. Session lưu volume `zalo-data`. Không cần scan lại nếu chưa logout.
 
-## 7. Test bot
+## 6. Test bot
 
-DM bot trên Zalo → bot reply. Nếu không reply, xem [troubleshooting.md](troubleshooting.md).
+DM bot trên Zalo → bot reply.
+
+## Quên mật khẩu Setup?
+
+Xoá file auth để reset về first-run:
+```bash
+docker exec openclaw-setup rm /data/setup/auth.json
+docker compose restart setup
+```
+Mở lại `/setup` → form tạo mật khẩu mới hiện ra.

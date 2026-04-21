@@ -32,30 +32,26 @@ Sau khi chạy xong, mở:
 
 | Dịch vụ             | URL                                       |
 |---------------------|-------------------------------------------|
+| **Setup UI (admin)** | `https://<host>:9504/setup`              |
+| Zalo QR             | `https://<host>:9504/zalo`                |
 | Dashboard 9router   | `http://<host>:20128`                     |
 | Gateway Openclaw    | `https://<host>:9504`                     |
-| Zalo QR             | `https://<host>:9504/zalo`                |
 
 > Cert là self-signed, browser sẽ cảnh báo lần đầu — accept qua.
 
-## Cấu hình sau cài đặt
+## Cấu hình sau cài đặt — chỉ qua **Setup UI**
 
-### 1. Nạp API keys vào 9router
-Vào dashboard `http://<host>:20128` → thêm provider (Gemini / OpenRouter / NVIDIA …) và dán API key. Dữ liệu lưu trong volume `router-data`.
+Mở `https://<host>:9504/setup`:
 
-### 2. Lấy khoá 9router để bot dùng
-Dashboard 9router → tab API Keys → copy key → cập nhật vào `openclaw.json` của bot:
+1. **Lần đầu** → tạo mật khẩu admin.
+2. Tab **General** → tên bot, system prompt, model mặc định.
+3. Tab **Providers** → thêm API keys (Gemini / OpenRouter / NVIDIA …). Bấm **Restart 9router**.
+4. Tab **Channels** → bật Zalo Personal / Telegram + nhập token.
+5. Tab **Memory** → bật active-memory + dreaming cron.
+6. Dashboard → bấm **Restart bot**.
+7. Vào `/zalo` scan QR (nếu đã bật Zalo).
 
-```bash
-docker exec -it openclaw-bot sh
-vi /root/.openclaw/openclaw.json
-# Sửa models.providers.9router.apiKey
-exit
-docker compose restart ai-bot
-```
-
-### 3. Đăng nhập Zalo
-Mở `https://<host>:9504/zalo` → scan QR bằng app Zalo Personal.
+> Tất cả edit JSON đều qua UI. Không cần `docker exec` mò vào container.
 
 ## Thư mục
 
@@ -68,7 +64,8 @@ openclaw-release/
 │   ├── bot/        Dockerfile + patch-openclaw.js + entrypoint
 │   ├── 9router/    Dockerfile + entrypoint
 │   ├── zalo/       Dockerfile + server.js + package.json
-│   └── nginx/      nginx.conf
+│   ├── setup/      Web UI admin (Express + EJS) — KHÔNG expose port
+│   └── nginx/      nginx.conf (route /setup, /zalo, /)
 ├── config/
 │   ├── openclaw/openclaw.json.example
 │   └── 9router/db.json.example

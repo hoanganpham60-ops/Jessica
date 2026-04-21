@@ -1,0 +1,27 @@
+<%- include('_header', { title: 'Channels', active: 'channels', flash: flash }) %>
+<h1>Channels</h1>
+<p class="muted">Bật/tắt kênh và nhập token.</p>
+
+<form method="post" class="form">
+  <fieldset>
+    <legend>Zalo Personal</legend>
+    <label class="check">
+      <input type="checkbox" name="zaloEnabled" <%= zaloEnabled?'checked':'' %>>
+      Bật Zalo Personal channel
+    </label>
+    <p class="hint">Sau khi bật + restart bot, vào <code>/zalo</code> để scan QR.</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Telegram</legend>
+    <label class="check">
+      <input type="checkbox" name="telegramEnabled" <%= telegramEnabled?'checked':'' %>>
+      Bật Telegram channel
+    </label>
+    <label>Bot token</label>
+    <input type="text" name="telegramToken" value="<%= telegramToken %>" placeholder="123456:ABC-...">
+  </fieldset>
+
+  <button class="primary" type="submit">Lưu</button>
+</form>
+<%- include('_footer') %>

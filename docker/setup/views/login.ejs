@@ -1,0 +1,11 @@
+<%- include('_header', { title: 'Đăng nhập', active: '', hideNav: true, flash: null }) %>
+<div class="auth-card">
+  <h1>Openclaw Setup</h1>
+  <% if (error) { %><div class="flash err"><%= error %></div><% } %>
+  <form method="post">
+    <label>Mật khẩu admin</label>
+    <input type="password" name="password" required autofocus>
+    <button class="primary" type="submit">Đăng nhập</button>
+  </form>
+</div>
+<%- include('_footer') %>

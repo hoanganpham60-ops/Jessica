@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title %> — Openclaw Setup</title>
+<link rel="stylesheet" href="/setup/static/style.css">
+</head>
+<body>
+<% if (locals.hideNav !== true) { %>
+<header class="topbar">
+  <div class="brand">🦊 Openclaw Setup</div>
+  <nav>
+    <a href="/setup" class="<%= active==='home'?'on':'' %>">Dashboard</a>
+    <a href="/setup/general" class="<%= active==='general'?'on':'' %>">General</a>
+    <a href="/setup/providers" class="<%= active==='providers'?'on':'' %>">Providers</a>
+    <a href="/setup/channels" class="<%= active==='channels'?'on':'' %>">Channels</a>
+    <a href="/setup/memory" class="<%= active==='memory'?'on':'' %>">Memory</a>
+    <a href="/setup/password" class="<%= active==='password'?'on':'' %>">Password</a>
+  </nav>
+  <form method="post" action="/setup/logout" class="logout">
+    <button type="submit">Logout</button>
+  </form>
+</header>
+<% } %>
+<main class="container">
+<% if (locals.flash) { %>
+  <div class="flash <%= flash.type %>"><%= flash.msg %></div>
+<% } %>

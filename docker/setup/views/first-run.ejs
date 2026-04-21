@@ -1,0 +1,14 @@
+<%- include('_header', { title: 'Thiết lập mật khẩu admin', active: '', hideNav: true, flash: null }) %>
+<div class="auth-card">
+  <h1>Thiết lập mật khẩu admin</h1>
+  <p class="muted">Đây là lần đầu mở Openclaw Setup. Tạo mật khẩu admin để bảo vệ UI.</p>
+  <% if (error) { %><div class="flash err"><%= error %></div><% } %>
+  <form method="post">
+    <label>Mật khẩu mới</label>
+    <input type="password" name="password" required minlength="6" autofocus>
+    <label>Nhập lại</label>
+    <input type="password" name="confirm" required minlength="6">
+    <button class="primary" type="submit">Tạo & đăng nhập</button>
+  </form>
+</div>
+<%- include('_footer') %>

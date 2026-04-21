@@ -1,0 +1,18 @@
+<%- include('_header', { title: 'General', active: 'general', flash: flash }) %>
+<h1>General</h1>
+<p class="muted">Thông tin cá nhân của bot. Edit xong bấm Lưu rồi Restart bot từ Dashboard.</p>
+
+<form method="post" class="form">
+  <label>Tên bot</label>
+  <input type="text" name="botName" value="<%= botName %>" placeholder="Jessica">
+
+  <label>Model mặc định</label>
+  <input type="text" name="model" value="<%= model %>" placeholder="9router/gemini/gemini-2.5-flash">
+  <p class="hint">Ví dụ: <code>9router/gemini/gemini-2.5-flash</code>, <code>9router/openrouter/qwen/qwen3-coder:free</code></p>
+
+  <label>System prompt</label>
+  <textarea name="systemPrompt" rows="8" placeholder="Bạn là trợ lý..."><%= systemPrompt %></textarea>
+
+  <button class="primary" type="submit">Lưu</button>
+</form>
+<%- include('_footer') %>

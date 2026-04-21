@@ -1,0 +1,27 @@
+<%- include('_header', { title: 'Memory', active: 'memory', flash: flash }) %>
+<h1>Memory</h1>
+<p class="muted">Cấu hình stack trí nhớ dài hạn của bot.</p>
+
+<form method="post" class="form">
+  <fieldset>
+    <legend>Plugins</legend>
+    <label class="check">
+      <input type="checkbox" name="memoryCoreOn" <%= memoryCoreOn?'checked':'' %>>
+      Bật <code>memory-core</code> (slot owner + dreaming)
+    </label>
+    <label class="check">
+      <input type="checkbox" name="activeMemoryOn" <%= activeMemoryOn?'checked':'' %>>
+      Bật <code>active-memory</code> (inject context trước mỗi DM)
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Dreaming cron</legend>
+    <label>Cron expression (Asia/Ho_Chi_Minh)</label>
+    <input type="text" name="coreCron" value="<%= coreCron %>" placeholder="0 3 * * *">
+    <p class="hint">Mặc định 3AM mỗi ngày.</p>
+  </fieldset>
+
+  <button class="primary" type="submit">Lưu</button>
+</form>
+<%- include('_footer') %>

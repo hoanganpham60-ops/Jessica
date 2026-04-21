@@ -1,0 +1,30 @@
+<%- include('_header', { title: 'Dashboard', active: 'home', flash: flash }) %>
+<h1>Dashboard</h1>
+<p class="muted">Trạng thái các container và hành động nhanh.</p>
+
+<div class="grid">
+  <% containers.forEach(c => { %>
+    <div class="card">
+      <div class="card-title"><%= c.name %></div>
+      <div class="muted"><%= c.status %></div>
+    </div>
+  <% }) %>
+  <% if (containers.length === 0) { %>
+    <div class="card"><em>Chưa lấy được danh sách container — kiểm tra mount docker.sock.</em></div>
+  <% } %>
+</div>
+
+<h2>Actions</h2>
+<div class="actions">
+  <form method="post" action="/setup/action/restart/bot"><button>Restart bot</button></form>
+  <form method="post" action="/setup/action/restart/9router"><button>Restart 9router</button></form>
+  <form method="post" action="/setup/action/restart/zalo"><button>Restart zalo</button></form>
+  <form method="post" action="/setup/action/restart/nginx"><button>Restart nginx</button></form>
+</div>
+
+<h2>Links</h2>
+<ul>
+  <li>9router dashboard: <code>http://&lt;host&gt;:20128</code></li>
+  <li>Zalo QR: <code>/zalo</code> (qua nginx)</li>
+</ul>
+<%- include('_footer') %>

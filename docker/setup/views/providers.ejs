@@ -1,0 +1,51 @@
+<%- include('_header', { title: 'LLM Providers', active: 'providers', flash: flash }) %>
+<h1>LLM Providers (9router)</h1>
+<p class="muted">Các kết nối tới nhà cung cấp LLM. Lưu rồi Restart 9router ở Dashboard.</p>
+
+<table class="table">
+  <thead><tr><th>Tên</th><th>Provider</th><th>Priority</th><th>Active</th><th>API key</th><th></th></tr></thead>
+  <tbody>
+  <% providers.forEach(p => { %>
+    <tr>
+      <td><%= p.name %></td>
+      <td><%= p.provider %></td>
+      <td><%= p.priority %></td>
+      <td><%= p.isActive ? '✅' : '⭕' %></td>
+      <td class="mono"><%= (p.apiKey||'').slice(0,8) %>…</td>
+      <td class="row-actions">
+        <form method="post" action="/setup/providers/<%= p.id %>/toggle"><button>Toggle</button></form>
+        <form method="post" action="/setup/providers/<%= p.id %>/delete" onsubmit="return confirm('Xoá provider này?')"><button class="danger">Xoá</button></form>
+      </td>
+    </tr>
+  <% }) %>
+  <% if (providers.length===0) { %>
+    <tr><td colspan="6"><em>Chưa có provider nào.</em></td></tr>
+  <% } %>
+  </tbody>
+</table>
+
+<h2>Thêm provider</h2>
+<form method="post" action="/setup/providers/add" class="form">
+  <label>Provider</label>
+  <select name="provider" required>
+    <option value="gemini">gemini</option>
+    <option value="openrouter">openrouter</option>
+    <option value="nvidia">nvidia</option>
+    <option value="openai">openai</option>
+    <option value="anthropic">anthropic</option>
+    <option value="qwen">qwen</option>
+    <option value="codex">codex</option>
+  </select>
+
+  <label>Tên hiển thị</label>
+  <input type="text" name="name" placeholder="Gemini-main">
+
+  <label>Priority (số nhỏ hơn = ưu tiên cao hơn)</label>
+  <input type="number" name="priority" value="1" min="1">
+
+  <label>API key</label>
+  <input type="text" name="apiKey" required placeholder="AIza... / sk-or-v1-... / nvapi-...">
+
+  <button class="primary" type="submit">Thêm</button>
+</form>
+<%- include('_footer') %>
