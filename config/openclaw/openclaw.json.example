@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "note": "Openclaw bot config — seed từ openclaw-release. Container tự copy file này vào /root/.openclaw/openclaw.json lần đầu."
+  },
+  "models": {
+    "providers": {
+      "9router": {
+        "type": "openai",
+        "baseUrl": "http://9router:20128/v1",
+        "apiKey": "REPLACE_WITH_9ROUTER_KEY"
+      }
+    },
+    "defaults": {
+      "chat": "9router/gemini/gemini-2.5-flash",
+      "reasoning": "9router/gemini/gemini-2.5-pro",
+      "light": "9router/gemini/gemini-2.5-flash-lite"
+    }
+  },
+  "agents": {
+    "chat": {
+      "name": "Jessica",
+      "model": "9router/gemini/gemini-2.5-flash",
+      "systemPrompt": "Bạn là trợ lý AI của người dùng. Trả lời ngắn gọn, tự nhiên, tiếng Việt."
+    },
+    "defaults": {
+      "memorySearch": {
+        "provider": "openai",
+        "remote": {
+          "baseUrl": "http://9router:20128/v1",
+          "apiKey": "REPLACE_WITH_9ROUTER_KEY"
+        },
+        "model": "gemini/gemini-embedding-001",
+        "outputDimensionality": 3072,
+        "experimental": { "sessionMemory": true },
+        "sync": { "onSessionStart": true, "onSearch": true, "watch": true },
+        "store": { "driver": "sqlite", "vector": true }
+      }
+    }
+  },
+  "plugins": {
+    "enabled": [
+      "memory-core",
+      "active-memory"
+    ],
+    "slots": {
+      "memory": "memory-core"
+    },
+    "config": {
+      "active-memory": {
+        "allowedChatTypes": ["direct"],
+        "model": "9router/gemini/gemini-2.5-flash-lite",
+        "queryMode": "recent",
+        "promptStyle": "contextual",
+        "timeoutMs": 5000,
+        "cacheSeconds": 30,
+        "logging": true
+      },
+      "memory-core": {
+        "dreaming": {
+          "cron": "0 3 * * *",
+          "timezone": "Asia/Ho_Chi_Minh",
+          "phases": {
+            "light": { "enabled": true },
+            "rem":   { "enabled": true },
+            "deep":  { "enabled": true }
+          }
+        }
+      }
+    }
+  },
+  "channels": {
+    "zalouser": {
+      "enabled": true,
+      "tts": { "auto": "off", "enabled": false }
+    }
+  },
+  "tts": {
+    "enabled": false,
+    "auto": "off"
+  },
+  "gateway": {
+    "host": "0.0.0.0",
+    "port": 18788,
+    "token": "REPLACE_WITH_OPENCLAW_TOKEN"
+  }
+}

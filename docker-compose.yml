@@ -1,0 +1,84 @@
+services:
+  9router:
+    build:
+      context: ./docker/9router
+    image: openclaw/9router:local
+    container_name: openclaw-9router
+    restart: always
+    environment:
+      HOME: /data
+      PORT: "20128"
+      HOSTNAME: 0.0.0.0
+      NODE_ENV: production
+    ports:
+      - "${NINEROUTER_PORT:-20128}:20128"
+    volumes:
+      - router-data:/data/.9router
+      # Seed db.json.example vào volume lần đầu; user edit db.json trong container/volume sau đó
+      - ./config/9router/db.json.example:/seed/db.json:ro
+    entrypoint: ["/entrypoint.sh"]
+
+  ai-bot:
+    build:
+      context: ./docker/bot
+    image: openclaw/bot:local
+    container_name: openclaw-bot
+    restart: always
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - bot-home:/root/.openclaw
+      - ./config/openclaw/openclaw.json.example:/seed/openclaw.json:ro
+      - openclaw-tmp:/tmp/openclaw
+    depends_on:
+      - 9router
+
+  zalo:
+    build:
+      context: ./docker/zalo
+    image: openclaw/zalo:local
+    container_name: openclaw-zalo
+    restart: always
+    environment:
+      OPENCLAW_GATEWAY: http://ai-bot:18788
+      OPENCLAW_TOKEN: ${OPENCLAW_TOKEN}
+      OPENCLAW_AGENT: chat
+      OPENCLAW_QR_PATH: /openclaw-tmp/openclaw-zalouser-qr-default.png
+    volumes:
+      - zalo-data:/data
+      - openclaw-tmp:/openclaw-tmp:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - ai-bot
+
+  nginx:
+    image: nginx:alpine
+    container_name: openclaw-nginx
+    restart: always
+    depends_on:
+      - ai-bot
+      - zalo
+    ports:
+      - "${NGINX_PORT:-9504}:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - nginx-ssl:/etc/nginx/ssl
+    entrypoint: >
+      /bin/sh -c "
+        if [ ! -f /etc/nginx/ssl/cert.pem ]; then
+          apk add --no-cache openssl &&
+          openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+            -keyout /etc/nginx/ssl/key.pem -out /etc/nginx/ssl/cert.pem \
+            -subj '/CN=openclaw-bot';
+        fi &&
+        nginx -g 'daemon off;'
+      "
+
+volumes:
+  bot-home:
+  router-data:
+  zalo-data:
+  openclaw-tmp:
+  nginx-ssl:

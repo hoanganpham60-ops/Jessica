@@ -1,0 +1,55 @@
+{
+  "providerConnections": [
+    {
+      "id": "example-gemini-1",
+      "provider": "gemini",
+      "authType": "apikey",
+      "name": "Gemini (example)",
+      "priority": 1,
+      "isActive": false,
+      "apiKey": "REPLACE_WITH_GEMINI_API_KEY",
+      "providerSpecificData": {
+        "connectionProxyEnabled": false,
+        "connectionProxyUrl": "",
+        "connectionNoProxy": ""
+      }
+    },
+    {
+      "id": "example-openrouter-1",
+      "provider": "openrouter",
+      "authType": "apikey",
+      "name": "OpenRouter (example)",
+      "priority": 2,
+      "isActive": false,
+      "apiKey": "REPLACE_WITH_OPENROUTER_API_KEY",
+      "providerSpecificData": {
+        "connectionProxyEnabled": false,
+        "connectionProxyUrl": "",
+        "connectionNoProxy": ""
+      }
+    }
+  ],
+  "combos": [
+    {
+      "id": "combo1",
+      "name": "Default combo",
+      "isActive": true,
+      "routingStrategy": "priority",
+      "connections": []
+    }
+  ],
+  "auth": {
+    "apiKeys": [
+      {
+        "id": "local-default",
+        "name": "local-default",
+        "key": "REPLACE_WITH_9ROUTER_KEY",
+        "active": true
+      }
+    ]
+  },
+  "settings": {
+    "port": 20128,
+    "host": "0.0.0.0"
+  }
+}

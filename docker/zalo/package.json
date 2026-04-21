@@ -1,0 +1,14 @@
+{
+  "name": "zalo-dashboard",
+  "version": "1.0.0",
+  "description": "QR dashboard for OpenClaw Zalo Personal channel",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.16.0"
+  }
+}

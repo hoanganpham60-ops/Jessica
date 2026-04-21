@@ -1,0 +1,22 @@
+# Env với secrets thật
+.env
+.env.local
+.env.*.local
+
+# Backups
+backups/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+# Docker leftovers
+.docker/
