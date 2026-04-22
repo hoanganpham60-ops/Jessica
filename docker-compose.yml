@@ -83,7 +83,7 @@ services:
       - zalo
       - setup
     ports:
-      - "${NGINX_PORT:-9504}:443"
+      - "${NGINX_PORT:-|port|}:443"
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - nginx-ssl:/etc/nginx/ssl
