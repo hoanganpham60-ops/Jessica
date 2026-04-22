@@ -32,16 +32,16 @@ Sau khi chạy xong, mở:
 
 | Dịch vụ             | URL                                       |
 |---------------------|-------------------------------------------|
-| **Setup UI (admin)** | `https://<host>:9504/setup`              |
-| Zalo QR             | `https://<host>:9504/zalo`                |
-| Dashboard 9router   | `http://<host>:20128`                     |
-| Gateway Openclaw    | `https://<host>:9504`                     |
+| **Setup UI (admin)** | `https://<host>:port/setup`              |
+| Zalo QR             | `https://<host>:port/zalo`                |
+| Dashboard 9router   | `http://<host>:port`                     |
+| Gateway Openclaw    | `https://<host>:port`                     |
 
 > Cert là self-signed, browser sẽ cảnh báo lần đầu — accept qua.
 
 ## Cấu hình sau cài đặt — chỉ qua **Setup UI**
 
-Mở `https://<host>:9504/setup`:
+Mở `https://<host>:port/setup`:
 
 1. **Lần đầu** → tạo mật khẩu admin.
 2. Tab **General** → tên bot, system prompt, model mặc định.
