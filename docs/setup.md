@@ -35,7 +35,7 @@ Installer sẽ tạo `.env` tự động (`OPENCLAW_TOKEN` + `SETUP_SESSION_SECR
 
 ## 4. Cấu hình qua Setup UI
 
-Mở browser → `https://<host>:9504/setup` → chấp nhận cert self-signed.
+Mở browser → `https://<host>:|port|/setup` → chấp nhận cert self-signed.
 
 ### Lần đầu: tạo mật khẩu admin
 Form "Thiết lập mật khẩu admin" hiện ra. Nhập mật khẩu (≥ 6 ký tự) → **Tạo & đăng nhập**.
@@ -75,7 +75,7 @@ Bấm **Lưu** → **Restart bot**.
 
 ## 5. Đăng nhập Zalo Personal
 
-1. Mở `https://<host>:9504/zalo`.
+1. Mở `https://<host>:|port|/zalo`.
 2. Scan QR bằng app Zalo Personal trên điện thoại.
 3. Session lưu volume `zalo-data`. Không cần scan lại nếu chưa logout.
 
