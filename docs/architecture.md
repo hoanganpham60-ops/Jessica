@@ -6,7 +6,7 @@
                   ┌──────────────────────────────────────┐
                   │            Host (Linux)              │
                   │                                      │
-  :9504 ───►      │  ┌──────────┐    ┌──────────────┐    │
+  :|port|───►     │  ┌──────────┐    ┌──────────────┐    │
   (HTTPS)         │  │  nginx   │──► │   ai-bot     │    │
                   │  │  (443)   │    │  gateway     │    │
                   │  └──────────┘    │  :18788/89   │    │
@@ -39,7 +39,7 @@
 | `openclaw-9router` | `openclaw/9router:local` | LLM proxy + routing combo. Dashboard `:20128`. |
 | `openclaw-zalo`    | `openclaw/zalo:local` | Sidecar serve QR dashboard cho Zalo Personal.     |
 | `openclaw-setup`   | `openclaw/setup:local` | Web UI admin. **Không expose port** — qua nginx `/setup`. |
-| `openclaw-nginx`   | `nginx:alpine`       | HTTPS reverse proxy `:9504` → setup + zalo + bot. |
+| `openclaw-nginx`   | `nginx:alpine`       | HTTPS reverse proxy `:|port|` → setup + zalo + bot. |
 
 ## Volumes
 
@@ -65,7 +65,7 @@ Docker network mặc định của compose. Các service gọi nhau qua **tên s
 
 | Port host | Nguồn              | Mục đích                         |
 |-----------|--------------------|----------------------------------|
-| `9504`    | `nginx:443`        | HTTPS gateway + Zalo QR.         |
+| `|port|`    | `nginx:443`        | HTTPS gateway + Zalo QR.         |
 | `20128`   | `9router:20128`    | Dashboard quản lý LLM provider.  |
 
 ## Secrets
